@@ -2,6 +2,9 @@ const express = require('express'); // Importamos la librería
 const app = express();
 const port = 3000;
 
+// impportar modulo que procesa texto
+const processor = require('./textProcessor');
+
 // Middleware: Permite que nuestra API entienda JSON en el cuerpo de la petición
 app.use(express.json());
 
@@ -9,40 +12,12 @@ app.use(express.json());
 app.post('/analyze', (req, res) => {
     const text = req.body.text || ""; // Obtenemos el texto del JSON
     
-    // 1. Lógica DSA: Conteo de palabras
-    // Split por espacios. Filter elimina strings vacíos por espacios dobles
-    const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+    // llamar al procesador de texto proveniente de textProcessor
+    const result = processor.analyzeText(text);
 
-    // 2. Lógica DSA: Frecuencia de caracteres (Hash Map)
-    // En C++: std::unordered_map<char, int> freq;
-    const charFrequency = {};
-    let maxCount = 0;
-    let mostCommonChar = ' ';
+    // retornar los datos en json
+    res.json(result);
     
-    for (let char of text) {
-        if (char.match(/[a-z]/i)) { // Solo letras, ignoramos signos
-            const lowerChar = char.toLowerCase();
-            // Si existe suma 1, si no, inicializa en 1
-            charFrequency[lowerChar] = (charFrequency[lowerChar] || 0) + 1;
-            
-        }
-    }
-
-    for (let char in charFrequency) {
-        // buscar el caracter mas repetido
-        if (charFrequency[char] > maxCount) {
-            maxCount = charFrequency[char];
-            mostCommonChar = char;
-        }
-    }
-
-    // Devolvemos la respuesta en JSON
-    res.json({
-        originalLength: text.length,
-        wordCount: wordCount,
-        mostFrequentChars: charFrequency,
-        mostCommonLetter: mostCommonChar
-    });
 });
 
 // Arrancar el servidor
