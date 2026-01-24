@@ -16,33 +16,23 @@ app.post('/analyze', (req, res) => {
     // 2. Lógica DSA: Frecuencia de caracteres (Hash Map)
     // En C++: std::unordered_map<char, int> freq;
     const charFrequency = {};
+    let maxCount = 0;
+    let mostCommonChar = ' ';
     
     for (let char of text) {
         if (char.match(/[a-z]/i)) { // Solo letras, ignoramos signos
             const lowerChar = char.toLowerCase();
             // Si existe suma 1, si no, inicializa en 1
             charFrequency[lowerChar] = (charFrequency[lowerChar] || 0) + 1;
+            
         }
     }
 
-    let mostFrequentLetter = 0;
-    let mostCommonChar = ' ';
-    for (let char1 of text) {
-        let letterCounter = 0;
-        for (let char2 of text) {
-            if (char1.match(/[a-z]/i) && char2.match(/[a-z]/i)) {
-                const lowerChar1 = char1.toLowerCase();
-                const lowerChar2 = char2.toLowerCase();
-
-                if (lowerChar1 == lowerChar2) {
-                    letterCounter = letterCounter + 1;
-                }
-
-                if (letterCounter > mostFrequentLetter) {
-                    mostFrequentLetter = letterCounter;
-                    mostCommonChar = lowerChar1;
-                } 
-            }
+    for (let char in charFrequency) {
+        // buscar el caracter mas repetido
+        if (charFrequency[char] > maxCount) {
+            maxCount = charFrequency[char];
+            mostCommonChar = char;
         }
     }
 
