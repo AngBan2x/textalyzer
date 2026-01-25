@@ -9,8 +9,10 @@ High-performance REST API for text analysis built with Node.js and custom hash m
 
 ## How to run
 - `npm install` then `node index.js`
+- open your browser and open the link `http://localhost:3000` (this will be changed, read TODO)
 
 ## TODO
 
 - Copy the information of the analysis to the clipboard, either in plain text or in JSON format.
 - Save the analysis to a file, either in plain text or in JSON format
+- Get a proper URL instead of localhost
