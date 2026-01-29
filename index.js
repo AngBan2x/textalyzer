@@ -51,7 +51,7 @@ app.post('/analyze', async (req, res) => { // async para esperar a la db
 // nuevo endpoint: ver historial (opcional, para probar)
 app.get('/history', async (req, res) => {
     try {
-        const result = await client.query('SELECTO * FROM analysis_history ORDER BY created_at DESC LIMIT 10');
+        const result = await client.query('SELECT * FROM analysis_history ORDER BY created_at DESC LIMIT 10');
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({error: "Error obteniendo historial"});

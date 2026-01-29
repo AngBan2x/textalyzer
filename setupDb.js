@@ -1,11 +1,10 @@
 // file that configures the setups the database tables for the cloud (neon/render)
+require('dotenv').config(); // for environment variables
 const { Client } = require('pg');
 
-// CONNECTION STRING DE NEON
-const connectionString = 'postgresql://neondb_owner:npg_LqjhKPt7E6Oy@ep-ancient-bonus-ae014sko-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
 const client = new Client({
-  connectionString: connectionString,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {rejectUnauthorized: false}
 });
 
 async function createTable() {
