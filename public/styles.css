@@ -1,0 +1,21 @@
+/* public/style.css */
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+h1 { color: #333; text-align: center; }
+textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+
+/* Botones agrupados */
+.button-group { display: flex; gap: 10px; margin-top: 10px; }
+button { flex: 1; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background 0.3s; font-weight: bold; }
+button:hover { background-color: #0056b3; }
+.btn-secondary { background-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
+
+/* Cajas de resultados */
+#results, #historySection { margin-top: 20px; padding: 20px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none; }
+.stat-box { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+.stat-label { font-weight: bold; color: #555; }
+
+/* Estilos para el historial */
+.history-card { background: #f8f9fa; border-left: 4px solid #007bff; padding: 10px 15px; margin-bottom: 10px; border-radius: 4px; }
+.history-text { font-style: italic; color: #444; margin-bottom: 8px; font-size: 14px; }
+.history-stats { font-size: 13px; color: #666; display: flex; gap: 15px; }
