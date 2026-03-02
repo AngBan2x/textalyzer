@@ -8,23 +8,38 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
         h1 { color: #333; text-align: center; }
         textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
-        button { display: block; width: 100%; padding: 10px; margin-top: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: background 0.3s; }
+        
+        /* Botones agrupados */
+        .button-group { display: flex; gap: 10px; margin-top: 10px; }
+        button { flex: 1; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background 0.3s; font-weight: bold; }
         button:hover { background-color: #0056b3; }
-        #results { margin-top: 20px; padding: 20px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-secondary:hover { background-color: #5a6268; }
+
+        #results, #historySection { margin-top: 20px; padding: 20px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none; }
         .stat-box { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
         .stat-label { font-weight: bold; color: #555; }
+
+        /* Estilos para el historial */
+        .history-card { background: #f8f9fa; border-left: 4px solid #007bff; padding: 10px 15px; margin-bottom: 10px; border-radius: 4px; }
+        .history-text { font-style: italic; color: #444; margin-bottom: 8px; font-size: 14px; }
+        .history-stats { font-size: 13px; color: #666; display: flex; gap: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>Text Analyzer API Client</h1>
-    <p>Paste your text below to get real-time statistics powered by Node.js</p>
+    <h1>📝 Text Analyzer API</h1>
+    <p>Paste your text below to get real-time statistics powered by Node.js & PostgreSQL</p>
     
     <textarea id="inputText" placeholder="Type or paste something here..."></textarea>
-    <button onclick="analyze()">Analyze Text</button>
+    
+    <div class="button-group">
+        <button onclick="analyze()">🔍 Analyze Text</button>
+        <button class="btn-secondary" onclick="loadHistory()">🕒 Load History</button>
+    </div>
 
     <div id="results">
-        <h3>Analysis Results:</h3>
+        <h3>Current Analysis:</h3>
         <div class="stat-box">
             <span class="stat-label">Total Characters:</span>
             <span id="charCount">0</span>
@@ -39,7 +54,14 @@
         </div>
     </div>
 
+    <div id="historySection">
+        <h3>Recent Analyses (from Database):</h3>
+        <div id="historyList">
+            </div>
+    </div>
+
     <script>
+        // Función 1: Analizar texto
         async function analyze() {
             const text = document.getElementById('inputText').value;
             const resultsDiv = document.getElementById('results');
@@ -50,7 +72,6 @@
             }
 
             try {
-                // AQUÍ OCURRE LA MAGIA: El frontend llama a tu backend
                 const response = await fetch('/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -61,7 +82,6 @@
 
                 const data = await response.json();
 
-                // Actualizamos la interfaz con los datos del backend
                 document.getElementById('charCount').textContent = data.originalLength;
                 document.getElementById('wordCount').textContent = data.wordCount;
                 document.getElementById('commonLetter').textContent = `"${data.mostCommonLetter}"`;
@@ -71,6 +91,52 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Something went wrong connecting to the server.');
+            }
+        }
+
+        // Función 2: Cargar historial
+        async function loadHistory() {
+            const historyDiv = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+
+            try {
+                // Un GET al endpoint que configuraste en index.js
+                const response = await fetch('/history');
+                const data = await response.json();
+
+                // Limpiar la lista antes de añadir los nuevos
+                historyList.innerHTML = '';
+
+                if (data.length === 0) {
+                    historyList.innerHTML = '<p>No history found yet. Analyze some text first!</p>';
+                } else {
+                    // Recorrer el array de resultados de PostgreSQL
+                    data.forEach(item => {
+                        // Cortar el texto si es muy largo para que no rompa el diseño
+                        const previewText = item.original_text.length > 60 
+                            ? item.original_text.substring(0, 60) + '...' 
+                            : item.original_text;
+
+                        // Crear una "tarjeta" por cada registro usando Template Literals
+                        const card = document.createElement('div');
+                        card.className = 'history-card';
+                        card.innerHTML = `
+                            <div class="history-text">"${previewText}"</div>
+                            <div class="history-stats">
+                                <span><strong>Words:</strong> ${item.word_count}</span>
+                                <span><strong>Top Char:</strong> '${item.most_common_char}'</span>
+                            </div>
+                        `;
+                        historyList.appendChild(card);
+                    });
+                }
+                
+                // Mostramos la sección
+                historyDiv.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading history:', error);
+                alert('Could not load history from the database.');
             }
         }
     </script>
